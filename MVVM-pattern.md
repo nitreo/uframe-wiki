@@ -1,0 +1,1 @@
+Learn more on how the MVVM pattern was implemented in this [Unite 2014 talk](https://youtu.be/hHI3k4JbRAA).

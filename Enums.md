@@ -1,0 +1,1 @@
+Documentation on the Enum node type.

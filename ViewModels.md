@@ -1,0 +1,15 @@
+[Watch on YouTube](https://www.youtube.com/watch?v=ZoO_B517QMc)
+
+#ViewModels
+ViewModels belong to the MVVM pattern, which is used all around uFrame. The entire idea of MVVM is to separate logic from the View and from data. For this, we need some sort of an object which will serve like a glue. This is exactly what ViewModel does. Intuitively ViewModel is just a data container which can report events about the data modifications to any interested part of your system, like Controllers and Views. Any time you change your data, ViewModels produce events so the View can react accordingly. And any time you invoke a command, the Controller can catch this event and handle it. Original MVVM pattern doesn’t use Controllers, however uFrame does use Controllers to delegate any logic from the ViewModel to the Controller when the command is invoked.
+
+When you define an Element, you can add properties, collections, and commands. They all form your ViewModel. Properties are represented as P class, which can store a value of a certain type and reports changes whenever you change this value. Collections are represented as model collection class. It stores items of a certain type, and reports changes whenever you add or remove an item. Commands are just objects that can trigger an event. Whenever your ViewModel is linked to the Controller and you trigger a command, the Controller will handle it and invoke any related logic.
+
+Whatever you define in your diagram, it’s going to be generated inside a special designer file, and you’re not going to look at this code anymore. However, you can add your own variables, events, and methods to the ViewModel partial class. In my case, it’s MyElement ViewModel.
+
+# Instantiating ViewModels
+There are several ways to instantiate a ViewModel. We’ll talk about the most basic ones. The most reasonable and correct way to get an instance of a ViewModel is to use its Controller. Let’s go to MainElement Controller now. MainElement has a link to MyElement, that is why inside MainElement Controller I have a link to MyElement Controller, and it’s called MyElement.
+
+Each Controller has a special method, and the naming convention is CreateElementName(), and in my case it’s CreateMyElement(). If you use this method, newly created instances will be linked to this MyElement Controller. It’s going to be passed through its Initialize() method here where you can define any additional logic related to initializing your ViewModel, and all the commands will be initialized too and handle properly.
+
+Alternatively you can use the public empty constructor. You can create your ViewModel just like you create any regular class. But in this case, the instance will not be linked to any controller, and commands will not be initialized, so you should deb careful about this method.
