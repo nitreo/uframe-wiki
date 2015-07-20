@@ -99,6 +99,6 @@ Read more about [ViewModelBase](ViewModelBase) and [ControllerBase](ControllerBa
 
 ## Inheritance
 
-You can connect two elements together to make one of the inherit all attributes from the other one. In the example below, SettingsScreen Element will contain the IsActive property and Close command of its parent SubScreen.
+You can connect two elements together to make one of them inherit all attributes from the other one. In the example below, SettingsScreen Element will contain the IsActive property and Close command of its parent SubScreen Element.
 
 ![](https://dl.dropboxusercontent.com/u/75445779/uFrame_wiki/Screenshot_97.png)
