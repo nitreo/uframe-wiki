@@ -1,76 +1,116 @@
-# Introduction
-Remember that [one of the core concepts](https://github.com/InvertGames/uFrame/wiki/Core-Concepts) in the uFrame MVVM design pattern is the separation of our object data and how that data gets represented in our games. An important piece to this idea is that because Views "live in the game" and ViewModels and Controllers "live in the data sphere", they don't really know or care about each other. Controllers do NOT know about Views and Views do NOT know about Controllers.
+# Basics
 
-![](http://i.imgur.com/0MShghM.png)
+## Introduction
 
-# Scene First Collections
-See [Instantiation Scenarios and Methods](https://github.com/InvertGames/uFrame/wiki/Instantiation-Scenarios-and-Methods)
+### What an element is?
 
-# Creating Your ViewModel
-Keeping that in mind, the first thing we'd then normally want to take care of is creating and adding our ViewModel to our collection. The logic for this will usually go in our Controller. For example, let's say we have an EnemyManager with a collection of Enemies and a CreateEnemy() command.
+Elements represent the [ViewModel](ViewModel) in the [MVVM pattern](MVVMPattern). In the game world it can be a player, weapon, menu screen or any other game entity. Elements hold only the data associated with the game’s entity. For example, Player element could contain information about player properties like health, running speed, obtained weapons or actions; Shoot, TakeDamage or Die.
 
-![](http://i.imgur.com/oyYtP7A.png)
+![](https://dl.dropboxusercontent.com/u/75445779/uFrame_wiki/Screenshot_90.png)
 
-We can call CreateEnemy() any time we want to add an enemy to the collection, and override the command in the EnemyManagerController:
+Technically, an Element is a node defined in the graph that contains informations used to create ViewModel and Controller classes.
 
-    public override void CreateEnemy (EnemyManagerViewModel enemyManager)
-    {
-        base.CreateEnemy (enemyManager);
+![](https://dl.dropboxusercontent.com/u/75445779/uFrame_wiki/node_to_code_generation.png)
 
-        var enemy = new EnemyViewModel(EnemyController); //create the ViewModel using the corresponding Controller
-        enemyManager.Enemies.Add(enemy); //add the ViewModel to our collection
-    }
+Elements in itself doesn’t contain any logic. They are also completely game engine independent meaning that they have no knowledge of Unity related elements like game objects or components.
 
-# Instantiating Your View
-We then later represent that change in our game by instantiating a game object with a View that points to the correct ViewModel. In your EnemyManagerView you can add a special binding called CreateEnemyView where you'll instantiate your EnemyView.
+Each element can be represented in the game world through a [View](Views). View is a MonoBehaviour that will take the data from an element and represent it in the game. For example, it’ll play the die animation when the player’s health reaches zero.
 
-![](http://i.imgur.com/TUp0ShV.png)
+### What is it for?
 
-    /// This binding will add or remove views based on an element/viewmodel collection.
-    public override ViewBase CreateEnemyView(EnemyViewModel item) {
+You can use it to model the game world entities with their attributes and actions even before making any Unity related stuff. They’ll be later represented visually in the game.
 
-        // here you can specify a prefab to use, a ViewModel to associate with, and a starting position
-        // the prefab must be located in a Resources folder and have an EnemyView attached
-        var v = InstantiateView(item);
-        return v;
-    }
+## Element Attributes
 
-Here your prefab **must**:
+#### Properties
 
-* Have a name that matches the name of your element, for example "Enemy"
-* Be located in a Resources folder. uFrame will try to find a prefab with a name that matches your element
-* Have a View attached with the name "ElementNameView", for example "EnemyView"
+Properties are like C# class properties but more powerfull. When changed, they can invoke [State Machine](ReactiveStateMachines) transitions, [Computed Properties](ComputedProperties) and any other method that is subscribed to them (read more in the [Code section](#code)).
 
-Or you could specify a specific prefab to use.
+You can select the property type from a list:
 
-    /// This binding will add or remove views based on an element/viewmodel collection.
-    public override ViewBase CreateEnemyView(EnemyViewModel item) {
+![](https://dl.dropboxusercontent.com/u/75445779/uFrame_wiki/Screenshot_93.png)
 
-        // here you can specify a prefab to use, a ViewModel to associate with, and a starting position
-        // the prefab must be located in a Resources folder and have an EnemyView attached
-        var v = InstantiateView("PrefabName", item);
-        return v;
-    }
+or you can drag another element, [Type Reference](TypeReferences), [Enum](Enums) or [StateMachine](StateMachine) to use its type:
 
-or...
+![](https://dl.dropboxusercontent.com/u/75445779/uFrame_wiki/Screenshot_94.png)
 
-    /// This binding will add or remove views based on an element/viewmodel collection.
-    public override ViewBase CreateEnemyView(EnemyViewModel item) {
+Linking a property to a view can make it a [Scene Property](SceneProperties).
 
-        // here you can specify a prefab to use, a ViewModel to associate with, and a starting position
-        // the prefab must be located in a Resources folder and have an EnemyView attached
-        var prefab = (GameObject)Resources.Load("SomeFolderWithinResources/SomeOtherFolderIfNeeded/PlayerViewPrefab");
-        var v = InstantiateView(prefab, item);
-        return v;
-    }
+Read more about [Properties](Properties)
 
-Here your prefab **must**:
-* Have an EnemyView attached
+#### Collections
 
-On your EnemyManagerView you can then specify a parent for your game objects to spawn under.
+Collections can store multiple elements of the same type. For example, you can store references to multiple menu screens that can be displayed/hidden on demand.
 
-![](http://i.imgur.com/KWVUZWJ.png)
+![](https://dl.dropboxusercontent.com/u/75445779/uFrame_wiki/Screenshot_95.png)
 
-# Additional Resources
-* [Instantiation Scenarios and Methods](https://github.com/InvertGames/uFrame/wiki/Instantiation-Scenarios-and-Methods)
-* [Aahz's RTS Example Project](https://github.com/InvertGames/uFrame/wiki/Examples)
+You can subscribe to changes in the collections and execute custom actions when an element is added/removed from the list.
+
+[subscription example]
+
+Read more about [Collections](Collections)
+
+#### Commands
+
+Commands allow to change the state of the ViewModel that the Element represents. If player gets damage, the TakeDamage command can be executed to descrease the player’s health. Usually, the ViewModel data should not be changed directly but only through the use of the defined commands. There are however use cases where VMs data can be changed directly from the View with [Scene Properties](SceneProperties) or [Services](Services).
+
+[link to an example]
+
+The actual implementation of the command is not stored inside the ViewModel but inside its [Controller](Controllers). When a ViewModel’s command gets called, it executes the command’s implementation defined in the controller. The controller then changes the ViewModel data what next triggers [bindings](Bindings) defined in the View.
+
+![](https://dl.dropboxusercontent.com/u/75445779/uFrame_wiki/uFrame_MVVM_flow.png)
+
+Read more about [Commands](Commands)
+
+### Linking nodes
+
+I you make a connection from a property to another node then the node’s type will become type of the property. The same is true for Collections. You can also link a Property to a View and create a [Scene Property](SceneProperties).
+
+You can think of a Collection as a `IList<nodeType>`. In fact, collections as well as properties and commands are implemented in a more advanced way.
+
+If you make a connection from a Command to another node, then the command will accept a parameter of a type of that node. 
+
+### Context Menu
+
+You have separate context menu for the node header and its attributes. Most of the options is self-explanatory. Other are explained below:
+
+* **Hide**
+
+    Allows to hide nodes that you don’t want to be on the diagram. You can restore node by clicking on the canvas and selecting node from the Show Item -> <Graph Name> menu. It is important to note, that Hide is not the same as Remove, as Node still present in the system and you can show it in any graph, which supports corresponding node type.   
+
+## Code
+
+### How elements are represented in the code?
+After creating an Element, setting its properties and recompiling, uFrame will create two editable files: {ElementName}ViewModel and {ElementName}Controller.
+
+Each of those files is empty by default and is intended to by filled with implementation by the user. All the attributes specified in the diagram and the MVVM code are specified in their base classes.
+
+Read more about [ViewModelBase](ViewModelBase) and [ControllerBase](ControllerBase) base classes.
+
+### ViewModel
+
+[ViewModel](ViewModel) is a class where all the data associated with a game entity is kept. You can also implement there [Computed Properties](Computed Properties), initialize [State Machines](Reactive State Machines), implement your own serialization methods  and define any other methods you need.
+
+### Controller
+
+[Controller](Controller) is created along with the ViewModel and it’s responsible for implementing logic behind the ViewModel. Any command that is specified in the graph Element will be implemented here.
+
+[Add example code]
+
+# Advanced
+
+## Inheritance
+
+You can connect two elements together to make one of the inherit all attributes from the other one. In the example below, SettingsScreen Element will contain the IsActive property and Close command of its parent SubScreen.
+
+![](https://dl.dropboxusercontent.com/u/75445779/uFrame_wiki/Screenshot_97.png)
+
+## Code
+Generated code (behind the scenes).
+All elements defined in the designer will be converted to C# code after hitting the Save & Compile button. uFrame will split the code into editable files (classes) which can be edited by the user and non-editable which should not be edited. The non-editable files will be regenerated after each assembly reload (recompilation).
+
+For more info see the topic [uFrame File Structure](uFrame File Structure).
+
+# Contribute
+
+If you would like to contribute to this page, please create an issue and describe changes you would like to make.
