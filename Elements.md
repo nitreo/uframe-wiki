@@ -36,6 +36,8 @@ or you can drag another element, [Type Reference](TypeReferences), [Enum](Enums)
 
 Linking a property to a view can make it a [Scene Property](SceneProperties).
 
+Read more about [Properties](Properties)
+
 #### Collections
 
 Collections can store multiple elements of the same type. For example, you can store references to multiple menu screens that can be displayed/hidden on demand.
@@ -45,6 +47,8 @@ Collections can store multiple elements of the same type. For example, you can s
 You can subscribe to changes in the collections and execute custom actions when an element is added/removed from the list.
 
 [subscription example]
+
+Read more about [Collections](Collections)
 
 #### Commands
 
@@ -56,15 +60,13 @@ The actual implementation of the command is not stored inside the ViewModel but 
 
 ![](https://dl.dropboxusercontent.com/u/75445779/uFrame_wiki/uFrame_MVVM_flow.png)
 
-Read more about it in the [Advanced section](#Advanced).
+Read more about [Commands](Commands)
 
-### Nodes you can you link to the Element
+### Linking nodes
 
-I you make a connection from a property to another node then the node’s type will become type of the property. The same is true for Collections.
+I you make a connection from a property to another node then the node’s type will become type of the property. The same is true for Collections. You can also link a Property to a View and create a [Scene Property](SceneProperties).
 
-You can think of a Collection as a `IList<nodeType>`. In fact, collections as well as properties and commands are implemented in a more advanced way. You can read about it [here](some page with detailed explanation how properties, collections and commands are implemented).
-
-If you make a connection from a Command to another node, then the command will accept a parameter of a type of that node. 
+If you make a connection from a Command to another node, then the command will have a parameter of a type of that node. If there's no link from the Command, it'll have no parameters.
 
 ### Context Menu
 
@@ -77,15 +79,15 @@ You have separate context menu for the node header and its attributes. Most of t
 ## Code
 
 ### How elements are represented in the code?
-After creating an Element, setting its properties and recompiling, uFrame will create two editable files: {ElementName}ViewModel and {ElementName}Controller.
+After creating an Element and recompiling, uFrame will create two editable files: {ElementName}ViewModel and {ElementName}Controller.
 
-Each of those files is empty by default and is intended to by filled with implementation by the user. All the attributes specified in the diagram and the MVVM code are specified in their base classes.
+Each of those files is empty by default and is intended to by filled with implementation by the user. All the attributes specified in the diagram and the MVVM code are inherited from their base classes.
 
 Read more about [ViewModelBase](ViewModelBase) and [ControllerBase](ControllerBase) base classes.
 
 ### ViewModel
 
-[ViewModel](ViewModel) is a class where all the data associated with a game entity is kept. You can also implement there [Computed Properties](Computed Properties), initialize [State Machines](Reactive State Machines), implement your own serialization methods  and define any other methods you need.
+[ViewModel](ViewModel) is a class where all the data associated with a game entity is kept. You can also implement there [Computed Properties](ComputedProperties), initialize [State Machines](ReactiveStateMachines), implement your own serialization methods  and define any other methods you need.
 
 ### Controller
 
@@ -100,13 +102,3 @@ Read more about [ViewModelBase](ViewModelBase) and [ControllerBase](ControllerBa
 You can connect two elements together to make one of the inherit all attributes from the other one. In the example below, SettingsScreen Element will contain the IsActive property and Close command of its parent SubScreen.
 
 ![](https://dl.dropboxusercontent.com/u/75445779/uFrame_wiki/Screenshot_97.png)
-
-## Code
-Generated code (behind the scenes).
-All elements defined in the designer will be converted to C# code after hitting the Save & Compile button. uFrame will split the code into editable files (classes) which can be edited by the user and non-editable which should not be edited. The non-editable files will be regenerated after each assembly reload (recompilation).
-
-For more info see the topic [uFrame File Structure](uFrame File Structure).
-
-# Contribute
-
-If you would like to contribute to this page, please create an issue and describe changes you would like to make.
