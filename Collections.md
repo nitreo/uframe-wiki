@@ -4,6 +4,8 @@
 # Introduction
 Remember that [one of the core concepts](https://github.com/InvertGames/uFrame/wiki/Core-Concepts) in the uFrame MVVM design pattern is the separation of our object data and how that data gets represented in our games. An important piece to this idea is that because Views "live in the game" and ViewModels and Controllers "live in the data sphere", they don't really know or care about each other. Controllers do NOT know about Views and Views do NOT know about Controllers.
 
+You can think of a Collection as a `IList<nodeType>`. In fact, collections as well as properties and commands are implemented in a more advanced way.
+
 ![](http://i.imgur.com/0MShghM.png)
 
 # Scene First Collections
